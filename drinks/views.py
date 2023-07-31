@@ -25,10 +25,23 @@ def drink_detail(request, id, format=None):
     try:
         drink = Drinks.objects.get(pk=id)
     except Drinks.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        fail_data = {
+            "status": "failed",
+            "code": 404,
+            "message": "Book not found",
+            "data": {}
+        }
+        return Response(fail_data, status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
         serializer = DrinkSerializer(drink)
-        return Response(serializer.data)
+        response_data = {
+            "status": "success",
+            "code": 200,
+            "message": "User data retrieved successfully",
+            "data": serializer.data
+        }
+
+        return Response(response_data)
     if request.method == 'PUT':
         serializer = DrinkSerializer(drink, data=request.data)
         if serializer.is_valid():
